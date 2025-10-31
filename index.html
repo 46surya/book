@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHTN Educational Book Series - Interactive Navigation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            background: rgba(255,255,255,0.2);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat strong {
+            display: block;
+            font-size: 1.8em;
+        }
+        
+        nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .nav-btn:hover, .nav-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .part {
+            margin-bottom: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .part h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .part-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        
+        .chapters {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .chapter-link {
+            display: block;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .chapter-link:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .chapter-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .chapter-title {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .chapter-pages {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .guide-section {
+            margin-bottom: 30px;
+        }
+        
+        .guide-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .guide-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        
+        .guide-link {
+            display: block;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+        
+        .guide-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .emoji {
+            margin-right: 8px;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .search-box {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            background: #28a745;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 PHTN Educational Book Series</h1>
+            <p>Complete Interactive Navigation - 1,255 Pages of Backend Mastery</p>
+            
+            <div class="stats">
+                <div class="stat">
+                    <strong>27</strong>
+                    <span>Chapters</span>
+                </div>
+                <div class="stat">
+                    <strong>5</strong>
+                    <span>Appendices</span>
+                </div>
+                <div class="stat">
+                    <strong>21</strong>
+                    <span>Exercises</span>
+                </div>
+                <div class="stat">
+                    <strong>4</strong>
+                    <span>Code Examples</span>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <button class="nav-btn active" onclick="showSection('start')">🏠 Start Here</button>
+            <button class="nav-btn" onclick="showSection('part1')">Part I: Foundations</button>
+            <button class="nav-btn" onclick="showSection('part2')">Part II: Patterns</button>
+            <button class="nav-btn" onclick="showSection('part3')">Part III: Advanced</button>
+            <button class="nav-btn" onclick="showSection('part4')">Part IV: PHTN</button>
+            <button class="nav-btn" onclick="showSection('appendices')">📖 Appendices</button>
+            <button class="nav-btn" onclick="showSection('exercises')">✏️ Exercises</button>
+            <button class="nav-btn" onclick="showSection('code')">💻 Code Examples</button>
+        </nav>
+        
+        <div class="content">
+            <!-- Start Here Section -->
+            <div class="section active" id="start">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Search chapters, topics, or keywords..." onkeyup="filterContent()">
+                </div>
+                
+                <div class="guide-section">
+                    <h3>📍 Getting Started</h3>
+                    <div class="guide-links">
+                        <a href="viewer.html?file=00_START_HERE.md" class="guide-link">
+                            <span class="emoji">🚀</span>Quick Start Guide
+                        </a>
+                        <a href="viewer.html?file=BOOK_SERIES_GUIDE.md" class="guide-link">
+                            <span class="emoji">🗺️</span>Book Series Guide
+                        </a>
+                        <a href="viewer.html?file=BOOK_COMPLETE.md" class="guide-link">
+                            <span class="emoji">🎉</span>Book Complete Summary
+                        </a>
+                        <a href="viewer.html?file=OVERALL_PROGRESS.md" class="guide-link">
+                            <span class="emoji">📈</span>Overall Progress
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="guide-section">
+                    <h3>📚 Part Summaries</h3>
+                    <div class="guide-links">
+                        <a href="viewer.html?file=PART_I_COMPLETE.md" class="guide-link">
+                            <span class="emoji">1️⃣</span>Part I: Foundations (7 chapters)
+                        </a>
+                        <a href="viewer.html?file=PART_II_COMPLETE.md" class="guide-link">
+                            <span class="emoji">2️⃣</span>Part II: Architectural Patterns (7 chapters)
+                        </a>
+                        <a href="viewer.html?file=PART_III_COMPLETE.md" class="guide-link">
+                            <span class="emoji">3️⃣</span>Part III: Advanced Backend (7 chapters)
+                        </a>
+                        <a href="viewer.html?file=PART_IV_COMPLETE.md" class="guide-link">
+                            <span class="emoji">4️⃣</span>Part IV: PHTN Middleware (6 chapters)
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="guide-section">
+                    <h3>📦 Supplementary Materials</h3>
+                    <div class="guide-links">
+                        <a href="viewer.html?file=SUPPLEMENTARY_MATERIALS.md" class="guide-link">
+                            <span class="emoji">📦</span>Complete Materials Guide
+                        </a>
+                        <a href="viewer.html?file=appendices/README.md" class="guide-link">
+                            <span class="emoji">📖</span>Appendices Overview
+                        </a>
+                        <a href="viewer.html?file=code_examples/README.md" class="guide-link">
+                            <span class="emoji">💻</span>Code Examples Overview
+                        </a>
+                        <a href="viewer.html?file=exercises/README.md" class="guide-link">
+                            <span class="emoji">✏️</span>Exercises Overview
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Part I -->
+            <div class="section" id="part1">
+                <div class="part">
+                    <h2>
+                        <span>Part I: Foundations</span>
+                        <span class="badge">7 Chapters</span>
+                    </h2>
+                    <p class="part-meta">~335 pages | Building blocks of backend development</p>
+                    
+                    <div class="chapters">
+                        <a href="viewer.html?file=chapters/01_http_protocol.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 1</span>
+                                <span class="chapter-title">HTTP Protocol</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/02_rest_apis.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 2</span>
+                                <span class="chapter-title">REST APIs</span>
+                            </div>
+                            <div class="chapter-pages">45 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/03_websockets.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 3</span>
+                                <span class="chapter-title">WebSockets</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/04_authentication.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 4</span>
+                                <span class="chapter-title">Authentication</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/05_authorization_rbac.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 5</span>
+                                <span class="chapter-title">Authorization & RBAC</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/06_sql_databases.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 6</span>
+                                <span class="chapter-title">SQL & Databases</span>
+                            </div>
+                            <div class="chapter-pages">60 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/07_python_backend.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 7</span>
+                                <span class="chapter-title">Python Backend Development</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Part II -->
+            <div class="section" id="part2">
+                <div class="part">
+                    <h2>
+                        <span>Part II: Architectural Patterns</span>
+                        <span class="badge">7 Chapters</span>
+                    </h2>
+                    <p class="part-meta">~330 pages | Production-grade design patterns</p>
+                    
+                    <div class="chapters">
+                        <a href="viewer.html?file=chapters/08_fastapi_framework.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 8</span>
+                                <span class="chapter-title">FastAPI Framework</span>
+                            </div>
+                            <div class="chapter-pages">60 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/09_multi_tenant.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 9</span>
+                                <span class="chapter-title">Multi-Tenant Architecture</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/10_rbac_implementation.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 10</span>
+                                <span class="chapter-title">RBAC Implementation</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/11_repository_pattern.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 11</span>
+                                <span class="chapter-title">Repository Pattern</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/12_service_layer.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 12</span>
+                                <span class="chapter-title">Service Layer Pattern</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/13_middleware_architecture.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 13</span>
+                                <span class="chapter-title">Middleware Architecture</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/14_dependency_injection.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 14</span>
+                                <span class="chapter-title">Dependency Injection</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Part III -->
+            <div class="section" id="part3">
+                <div class="part">
+                    <h2>
+                        <span>Part III: Advanced Backend</span>
+                        <span class="badge">7 Chapters</span>
+                    </h2>
+                    <p class="part-meta">~320 pages | Advanced production topics</p>
+                    
+                    <div class="chapters">
+                        <a href="viewer.html?file=chapters/15_jwt_deep_dive.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 15</span>
+                                <span class="chapter-title">JWT Tokens - Deep Dive</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/16_password_security.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 16</span>
+                                <span class="chapter-title">Password Security</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/17_database_pooling.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 17</span>
+                                <span class="chapter-title">Database Connection Pooling</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/18_async_python.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 18</span>
+                                <span class="chapter-title">Async Python Programming</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/19_websocket_architecture.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 19</span>
+                                <span class="chapter-title">WebSocket Architecture</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/20_message_queuing.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 20</span>
+                                <span class="chapter-title">Message Queuing</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/21_observability.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 21</span>
+                                <span class="chapter-title">Observability</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Part IV -->
+            <div class="section" id="part4">
+                <div class="part">
+                    <h2>
+                        <span>Part IV: PHTN Middleware</span>
+                        <span class="badge">6 Chapters</span>
+                    </h2>
+                    <p class="part-meta">~270 pages | PHTN-specific implementation</p>
+                    
+                    <div class="chapters">
+                        <a href="viewer.html?file=chapters/22_hierarchical_system.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 22</span>
+                                <span class="chapter-title">The 8-Level Hierarchical System</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/23_langflow_integration.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 23</span>
+                                <span class="chapter-title">LangFlow Integration</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/24_ontological_intelligence.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 24</span>
+                                <span class="chapter-title">Ontological Intelligence</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/25_request_flow.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 25</span>
+                                <span class="chapter-title">Complete Request Flow</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/26_building_phtn.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 26</span>
+                                <span class="chapter-title">Building PHTN Middleware</span>
+                            </div>
+                            <div class="chapter-pages">50 pages</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=chapters/27_production_deployment.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 27</span>
+                                <span class="chapter-title">Production Deployment</span>
+                            </div>
+                            <div class="chapter-pages">40 pages</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Appendices -->
+            <div class="section" id="appendices">
+                <div class="part">
+                    <h2>
+                        <span>📖 Appendices</span>
+                        <span class="badge">5 References</span>
+                    </h2>
+                    <p class="part-meta">~80 pages | Quick reference materials</p>
+                    
+                    <div class="chapters">
+                        <a href="viewer.html?file=appendices/A_quick_reference.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">📋</span>
+                                <span class="chapter-title">Quick Reference Guide</span>
+                            </div>
+                            <div class="chapter-pages">Essential commands & patterns</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=appendices/B_glossary.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">📚</span>
+                                <span class="chapter-title">Glossary of Terms</span>
+                            </div>
+                            <div class="chapter-pages">100+ technical terms</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=appendices/C_troubleshooting.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">🔧</span>
+                                <span class="chapter-title">Troubleshooting Guide</span>
+                            </div>
+                            <div class="chapter-pages">Common problems & solutions</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=appendices/D_cheat_sheets.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">📝</span>
+                                <span class="chapter-title">Cheat Sheets</span>
+                            </div>
+                            <div class="chapter-pages">10 framework references</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=appendices/E_architecture_patterns.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">🏗️</span>
+                                <span class="chapter-title">Architecture Patterns Summary</span>
+                            </div>
+                            <div class="chapter-pages">10 design patterns</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercises -->
+            <div class="section" id="exercises">
+                <div class="part">
+                    <h2>
+                        <span>✏️ Exercises</span>
+                        <span class="badge">21 Problems</span>
+                    </h2>
+                    <p class="part-meta">Practice problems with complete solutions</p>
+                    
+                    <div class="chapters">
+                        <a href="viewer.html?file=exercises/chapter_08_exercises.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 8</span>
+                                <span class="chapter-title">FastAPI Framework Exercises</span>
+                            </div>
+                            <div class="chapter-pages">8 exercises with solutions</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=exercises/chapter_15_exercises.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 15</span>
+                                <span class="chapter-title">JWT Tokens Exercises</span>
+                            </div>
+                            <div class="chapter-pages">7 exercises with solutions</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=exercises/chapter_22_exercises.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">Ch 22</span>
+                                <span class="chapter-title">Hierarchical System Exercises</span>
+                            </div>
+                            <div class="chapter-pages">6 exercises with solutions</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Code Examples -->
+            <div class="section" id="code">
+                <div class="part">
+                    <h2>
+                        <span>💻 Code Examples</span>
+                        <span class="badge">4 Applications</span>
+                    </h2>
+                    <p class="part-meta">Complete working applications with documentation</p>
+                    
+                    <div class="chapters">
+                        <a href="viewer.html?file=code_examples/01_simple_api/main.py" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">📝</span>
+                                <span class="chapter-title">Simple Todo API</span>
+                            </div>
+                            <div class="chapter-pages">~120 lines | FastAPI basics</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=code_examples/01_simple_api/README.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">📖</span>
+                                <span class="chapter-title">Simple API - Documentation</span>
+                            </div>
+                            <div class="chapter-pages">Setup & usage guide</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=code_examples/02_auth_system/main.py" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">🔐</span>
+                                <span class="chapter-title">Authentication System</span>
+                            </div>
+                            <div class="chapter-pages">~200 lines | JWT + bcrypt</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=code_examples/02_auth_system/test_auth.py" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">✅</span>
+                                <span class="chapter-title">Auth System - Tests</span>
+                            </div>
+                            <div class="chapter-pages">Complete test suite</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=code_examples/03_multi_tenant_starter/main.py" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">🏢</span>
+                                <span class="chapter-title">Multi-Tenant Starter</span>
+                            </div>
+                            <div class="chapter-pages">~180 lines | Tenant isolation</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=code_examples/03_multi_tenant_starter/README.md" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">📖</span>
+                                <span class="chapter-title">Multi-Tenant - Documentation</span>
+                            </div>
+                            <div class="chapter-pages">Usage guide</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=code_examples/04_websocket_chat/main.py" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">💬</span>
+                                <span class="chapter-title">WebSocket Chat Server</span>
+                            </div>
+                            <div class="chapter-pages">~250 lines | Real-time chat</div>
+                        </a>
+                        
+                        <a href="viewer.html?file=code_examples/04_websocket_chat/client.html" class="chapter-link">
+                            <div>
+                                <span class="chapter-number">🌐</span>
+                                <span class="chapter-title">WebSocket Chat Client</span>
+                            </div>
+                            <div class="chapter-pages">Browser-based interface</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p><strong>PHTN Educational Book Series</strong></p>
+            <p>Complete 1,255-page journey from HTTP fundamentals to production-grade AI platforms</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                27 Chapters | 5 Appendices | 21 Exercises | 4 Code Examples
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Set active button
+            event.target.classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function filterContent() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (searchTerm === '') {
+                // Show all if search is empty
+                document.querySelectorAll('.chapter-link, .guide-link').forEach(link => {
+                    link.style.display = 'block';
+                });
+                return;
+            }
+            
+            // Filter all links
+            document.querySelectorAll('.chapter-link, .guide-link').forEach(link => {
+                const text = link.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    link.style.display = 'block';
+                } else {
+                    link.style.display = 'none';
+                }
+            });
+        }
+        
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '/') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+    </script>
+</body>
+</html>
